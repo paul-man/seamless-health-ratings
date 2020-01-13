@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+  "name": "Seamless Health",
+  "version": "1.0",
+
+  "description": "Searches for NYC health ratings while browsing the Seamless website.",
+
+  "icons": {
+    "96": "icons/seamless-health-96.png",
+    "48": "icons/seamless-health-48.png"
+  },
+  "permissions": [
+    "*://seamless.com/menu*",
+    "*://data.cityofnewyork.us/*",
+    "activeTab",
+    "tabs",
+    "webRequest"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.seamless.com/menu*"],
+      "js": ["seamless-health.js", "lib/jquery-3.4.1.min.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "applications": {
+    "gecko": {
+      "id": "seamless-health@example.com"
+    }
+  }
+}
