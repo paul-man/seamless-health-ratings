@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "Seamless Health",
-  "version": "1.0",
+  "name": "Seamless NYC Health Ratings",
+  "version": "2.1",
 
   "description": "Searches for NYC health ratings while browsing the Seamless website.",
 
@@ -32,7 +32,7 @@
   },
   "applications": {
     "gecko": {
-      "id": "seamless-health@example.com"
+      "id": "seamless.nyc.health.ratings@gmail.com"
     }
   }
 }
