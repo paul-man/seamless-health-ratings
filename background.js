@@ -6,20 +6,25 @@ browser.runtime.onMessage.addListener((request, sender) => {
   }
 });
 
-function getHealthGrade(dba) {    
-  return $.ajax({
-    url: "https://data.cityofnewyork.us/resource/43nn-pn8j.json",
-    type: "GET",
-    data: {
-      "$limit" : 5000,
-      "$$app_token" : "nycDataAppToken",
-      "dba": dba.toUpperCase() // "Doing Business As"
-    }
-  }).done(function(data) {
+function getHealthGrade(dba) {
+  var url = new URL('https://data.cityofnewyork.us/resource/43nn-pn8j.json')
+  var params = {
+    "$limit" : 5000,
+    "$$app_token" : "nycDataAppToken",
+    "dba": dba.toUpperCase() // "Doing Business As"
+  };
+  url.search = new URLSearchParams(params).toString();
+  
+  return fetch(url)
+  .then((response) => response.json())
+  .then((data) => {
     data.sort((a, b) => {
       return a.inspection_date < b.inspection_date;
     });
     return data;
+  })
+  .catch((error) => {
+    console.error('Error:', error);
   });
 }
 
