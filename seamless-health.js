@@ -1,10 +1,13 @@
-let body = document.body;
-let timer = setInterval(waitForRestaurantData, 1000);
+var body = document.body;
+var timer = setInterval(waitForRestaurantData, 1000);
+var attemptCount = 0;
+
 /*
   Seamless loads the restaurant data in a clean JSON object but we must wait for the object to be loaded to take advantage
   TODO: Utilize background scripts to set an onLoad event listener
 */
 function waitForRestaurantData() {
+  if (attemptCount++ >= 10) clearInterval(timer);
   if(body.getElementsByTagName('ghs-schema-place-action')[0]) {
     clearInterval(timer);
     setRestaurantData();
@@ -14,23 +17,11 @@ function waitForRestaurantData() {
 
 function setRestaurantData() {
   restaurantData = JSON.parse(body.getElementsByTagName('ghs-schema-place-action')[0].firstChild.innerText);
-  loadHealthRatings(restaurantData.name);
+  loadHealthRatingsBackground(restaurantData.name);
 }
 
-function loadHealthRatings(dba) {
-  $.ajax({
-    url: "https://data.cityofnewyork.us/resource/43nn-pn8j.json",
-    type: "GET",
-    data: {
-      "$limit" : 5000,
-      "$$app_token" : "nycDataAppToken",
-      "dba": dba.toUpperCase() // "Doing Business As"
-    }
-  }).done(function(data) {
-    data.sort((a, b) => {
-      return a.inspection_date < b.inspection_date;
-    });
-    
+function loadHealthRatingsBackground(dba){
+  browser.runtime.sendMessage({"dba": dba}).then(data => {
     let ratingColor = '';
     switch (data[0].grade) {
       case 'A':
@@ -54,5 +45,5 @@ function loadHealthRatings(dba) {
       body.querySelector('h1.ghs-restaurant-nameHeader').innerHTML = 
         `${restaurantName}<br><span id="health-rating-text" style='color:${ratingColor};'>Health Rating: ${data[0].grade}</span>`;
     }
-  });
+  }).catch(onError);
 }
