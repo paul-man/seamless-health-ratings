@@ -22,8 +22,13 @@ function setRestaurantData() {
 
 function loadHealthRatingsBackground(dba){
   browser.runtime.sendMessage({"dba": dba}).then(data => {
+    if (data.length === 0) {
+      data.push({grade: 'N/A'});
+    }
+    let latestInspection = data[0];
+
     let ratingColor = '';
-    switch (data[0].grade) {
+    switch (latestInspection.grade) {
       case 'A':
         ratingColor = 'blue';
         break;
@@ -34,16 +39,27 @@ function loadHealthRatingsBackground(dba){
         ratingColor = 'orange';
         break;
       default:
+        latestInspection.grade = 'N/A'
         ratingColor = 'gray';
     }
-    let healthRating = document.getElementById('health-rating-text');
-    if (healthRating) {
-      healthRating.style.color = ratingColor;
-      healthRating.innerHTML = `Health Rating: ${data[0].grade}`;
+    let healthRatingElement = document.getElementById('health-rating-text');
+    if (healthRatingElement) {
+      healthRatingElement.style.color = ratingColor;
+      healthRatingElement.innerText = `Health Rating: ${latestInspection.grade}`;
     } else {
-      let restaurantName = body.querySelector('h1.ghs-restaurant-nameHeader').innerHTML;
-      body.querySelector('h1.ghs-restaurant-nameHeader').innerHTML = 
-        `${restaurantName}<br><span id="health-rating-text" style='color:${ratingColor};'>Health Rating: ${data[0].grade}</span>`;
+      let restaurantNameElement = body.querySelector('h1.ghs-restaurant-nameHeader');
+
+      healthRatingElement = document.createElement('h1');
+      healthRatingElement.setAttribute('id', 'health-rating-text');
+      healthRatingElement.setAttribute('style', `color:${ratingColor}`);
+      healthRatingElement.innerText = `Health Rating: ${latestInspection.grade}`;
+
+      insertElementAfter(restaurantNameElement, healthRatingElement);
+      insertElementAfter(restaurantNameElement, document.createElement('br'));
     }
   }).catch(onError);
+}
+
+function insertElementAfter(originalElement, afterElement) {
+  originalElement.parentNode.insertBefore(afterElement, originalElement.nextSibling);
 }
