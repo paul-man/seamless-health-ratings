@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Seamless NYC Health Ratings",
-  "version": "2.1",
+  "version": "3.1",
 
   "description": "Searches for NYC health ratings while browsing the Seamless website.",
 
