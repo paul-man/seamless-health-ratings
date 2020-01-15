@@ -14,7 +14,10 @@
     "*://data.cityofnewyork.us/*",
     "activeTab",
     "tabs",
-    "webRequest"
+    "webRequest",
+    "webNavigation",
+    "storage",
+    "<all_urls>"
   ],
   "content_scripts": [
     {
@@ -23,6 +26,10 @@
       "run_at": "document_end"
     }
   ],
+  "background": {
+    "scripts": ["background.js", "lib/jquery-3.4.1.min.js"],
+    "persistent": true
+  },
   "applications": {
     "gecko": {
       "id": "seamless-health@example.com"
