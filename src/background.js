@@ -31,7 +31,7 @@ function getHealthGrade(dba) {
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
   if (tab.url.match(seamlessReg) || tab.url.match(grubhubReg)) {
     if (changeInfo.status == 'complete') {
-      browser.tabs.executeScript(tabId, {file:"/seamless-health.js"}).then(()=>{
+      browser.tabs.executeScript(tabId, {file:"/src/seamless-health.js"}).then(()=>{
       console.log("Executed!");
       }).catch(err=>{
         console.error(err);
