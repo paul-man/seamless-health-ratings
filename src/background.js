@@ -1,3 +1,6 @@
+/**
+ * listening for a message from the content_script containing the dba(restaurant name)
+ */
 browser.runtime.onMessage.addListener((request, sender) => {
   if (request.dba.length > 0) {
     return Promise.resolve(getHealthGrade(request.dba));
@@ -6,6 +9,10 @@ browser.runtime.onMessage.addListener((request, sender) => {
   }
 });
 
+/**
+ * Calls NYC data API with restaurant name to retireve inspection data/results
+ * @param {String} dba : Doing Business As (restuarant name)
+ */
 function getHealthGrade(dba) {
   var url = new URL('https://data.cityofnewyork.us/resource/43nn-pn8j.json')
   var params = {
@@ -28,6 +35,9 @@ function getHealthGrade(dba) {
   });
 }
 
+/**
+ * Listener for tab update. If a tab is updated that matches the patterns below the content script is called again
+ */
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
   if (tab.url.match(seamlessReg) || tab.url.match(grubhubReg)) {
     if (changeInfo.status == 'complete') {
@@ -40,5 +50,6 @@ chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
   }
 });
 
+// Regex patterns to match compatible online food service websites
 let seamlessReg = /.*:\/\/.*\.seamless\.com\/menu\/.*/g;
 let grubhubReg = /.*:\/\/.*\.grubhub\.com\/restaurant\/.*/g;
