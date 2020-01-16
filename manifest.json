@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Seamless NYC Health Ratings",
-  "version": "3.1",
+  "name": "Grubless NYC Health Ratings",
+  "version": "4.0",
 
-  "description": "Searches for NYC health ratings while browsing the Seamless website.",
+  "description": "Searches for NYC health ratings while browsing the Seamless and Grubhub websites.",
 
   "icons": {
     "48": "icons/icon.svg",
