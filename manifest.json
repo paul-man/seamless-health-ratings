@@ -6,8 +6,8 @@
   "description": "Searches for NYC health ratings while browsing the Seamless website.",
 
   "icons": {
-    "96": "icons/seamless-health-96.png",
-    "48": "icons/seamless-health-48.png"
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
   },
   "permissions": [
     "*://data.cityofnewyork.us/resource/*",
