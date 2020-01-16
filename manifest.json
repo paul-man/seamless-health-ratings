@@ -18,12 +18,12 @@
   "content_scripts": [
     {
       "matches": ["*://*.seamless.com/menu*", "*://grubhub.com/restaurant/*"],
-      "js": ["seamless-health.js"],
+      "js": ["/src/seamless-health.js"],
       "run_at": "document_end"
     }
   ],
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["/src/background.js"],
     "persistent": true
   },
   "applications": {
