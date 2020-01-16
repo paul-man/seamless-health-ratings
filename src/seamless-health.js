@@ -30,13 +30,13 @@ function loadHealthRatingsBackground(dba){
     let ratingColor = '';
     switch (latestInspection.grade) {
       case 'A':
-        ratingColor = 'blue';
+        ratingColor = '#2A3E83';
         break;
       case 'B':
-        ratingColor = 'green';
+        ratingColor = '#58944C';
         break;
       case 'C':
-        ratingColor = 'orange';
+        ratingColor = '#C4673C';
         break;
       default:
         latestInspection.grade = 'N/A'
