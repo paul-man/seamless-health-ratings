@@ -17,7 +17,7 @@
   ],
   "content_scripts": [
     {
-      "matches": ["*://*.seamless.com/menu*"],
+      "matches": ["*://*.seamless.com/menu*", "*://grubhub.com/restaurant/*"],
       "js": ["seamless-health.js"],
       "run_at": "document_end"
     }

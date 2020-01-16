@@ -29,7 +29,7 @@ function getHealthGrade(dba) {
 }
 
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
-  if (tab.url.match(reg)) {
+  if (tab.url.match(seamlessReg) || tab.url.match(grubhubReg)) {
     if (changeInfo.status == 'complete') {
       browser.tabs.executeScript(tabId, {file:"/seamless-health.js"}).then(()=>{
       console.log("Executed!");
@@ -40,4 +40,5 @@ chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
   }
 });
 
-let reg = /.*:\/\/.*\.seamless\.com\/menu\/.*/g;
+let seamlessReg = /.*:\/\/.*\.seamless\.com\/menu\/.*/g;
+let grubhubReg = /.*:\/\/.*\.grubhub\.com\/restaurant\/.*/g;
