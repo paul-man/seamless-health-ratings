@@ -18,7 +18,8 @@
   "content_scripts": [
     {
       "matches": ["*://*.seamless.com/menu*", "*://grubhub.com/restaurant/*"],
-      "js": ["/src/seamless-health.js"],
+      "js": ["/src/grubless-health.js"],
+      "css": ["src/grubless-health.css"]
       "run_at": "document_end"
     }
   ],

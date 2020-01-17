@@ -89,6 +89,7 @@ function loadHealthRatingsBackground(dba, building, street, zipcode){
       healthRatingElement = document.createElement('h1');
       healthRatingElement.setAttribute('id', 'health-rating-text');
       healthRatingElement.setAttribute('style', `color:${ratingColor}`);
+      
       healthRatingElement.innerText = `Health Rating: ${latestInspection.grade}`;
 
       insertElementAfter(restaurantNameElement, healthRatingElement);
