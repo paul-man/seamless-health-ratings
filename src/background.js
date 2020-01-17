@@ -3,7 +3,7 @@
  */
 browser.runtime.onMessage.addListener((request, sender) => {
   if (request.dba.length > 0) {
-    return Promise.resolve(getHealthGrade(request.dba));
+    return Promise.resolve(getHealthGrade(request.dba, request.building, request.street, request.zipcode));
   } else {
     return Promise.reject();
   }
@@ -13,12 +13,14 @@ browser.runtime.onMessage.addListener((request, sender) => {
  * Calls NYC data API with restaurant name to retireve inspection data/results
  * @param {String} dba : Doing Business As (restuarant name)
  */
-function getHealthGrade(dba) {
+function getHealthGrade(dba, building, street, zipcode) {
   var url = new URL('https://data.cityofnewyork.us/resource/43nn-pn8j.json')
   var params = {
     "$limit" : 5000,
     "$$app_token" : "nycDataAppToken",
-    "dba": dba.toUpperCase() // "Doing Business As"
+    "building": building,
+    "street": street,
+    "zipcode": zipcode
   };
   url.search = new URLSearchParams(params).toString();
   

@@ -39,15 +39,21 @@ function displayConnectionError() {
  */
 function setRestaurantData() {
   restaurantData = JSON.parse(document.body.getElementsByTagName('ghs-schema-place-action')[0].firstChild.innerText);
-  loadHealthRatingsBackground(restaurantData.name);
+  let address = restaurantData.address.streetAddress.split(' ');
+  loadHealthRatingsBackground(restaurantData.name, address.shift(), address.join(' ').toUpperCase(), restaurantData.address.postalCode);
 }
 
 /**
  * Calls background script to make API request to NYC open data and retrieve health rating information
  * @param {String} dba : Doing Business As (restuarant name)
  */
-function loadHealthRatingsBackground(dba){
-  browser.runtime.sendMessage({"dba": dba}).then(data => {
+function loadHealthRatingsBackground(dba, building, street, zipcode){
+  browser.runtime.sendMessage({
+    "dba": dba,
+    "building": building,
+    "street": street,
+    "zipcode": zipcode
+  }).then(data => {
     if (data.length === 0) {
       data.push({grade: 'N/A'});
     }
