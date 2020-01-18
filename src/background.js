@@ -11,7 +11,10 @@ browser.runtime.onMessage.addListener((request, sender) => {
 
 /**
  * Calls NYC data API with restaurant name to retireve inspection data/results
- * @param {String} dba : Doing Business As (restuarant name)
+ * @param {string} dba - Doing Business As (restuarant name)
+ * @param {Number} building - Building number for business address
+ * @param {string} street - Street name for business
+ * @param {number} zipcode - Zipcode(postal code) for business
  */
 function getHealthGrade(dba, building, street, zipcode) {
   var url = new URL('https://data.cityofnewyork.us/resource/43nn-pn8j.json')
