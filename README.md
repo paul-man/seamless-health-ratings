@@ -32,7 +32,8 @@ TODO
 - ~Utilize background scripts to detect new page loads~
   - ~re-fetch new restaurant data~
 - ~Consider missing inspection grades, display "Unavailable", "N/A", etc...~
-- Create link back to NYC health data
-- Create tooltip with disclaimer about possible data innacuracy
+- ~Create link back to NYC health data~
+- ~Create tooltip with disclaimer about possible data innacuracy~
 - Make compatible with Chrome browser
-- Utilize restaurant address for better API results
+- ~Utilize restaurant address for better API results~
+  - Create fall backs to account for "BLVD" vs. "BOULEVARD", "ST" vs. "STREET", etc...
