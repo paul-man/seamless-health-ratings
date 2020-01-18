@@ -19,7 +19,7 @@
 /**
  * If 10 unsuccessful attempts are made to get the Seamless/Grubhub restaurant data element we alert the user
  */
-function displayConnectionError() {
+function displayConnectionError(msg) {
   let healthRatingNotFoundElement = document.getElementById('health-rating-not-found');
   if (healthRatingNotFoundElement) return;
 
@@ -30,7 +30,7 @@ function displayConnectionError() {
   }
   healthRatingNotFoundElement = document.createElement('h4');
   healthRatingNotFoundElement.setAttribute('id', 'health-rating-not-found');
-  healthRatingNotFoundElement.innerText = 'Unable to find restauraunt data';
+  healthRatingNotFoundElement.innerText = msg || 'Unable to find restauraunt data';
   insertElementAfter(restaurantNameElement, healthRatingNotFoundElement);
 }
 
@@ -48,6 +48,9 @@ function setRestaurantData() {
  * @param {String} dba : Doing Business As (restuarant name)
  */
 function loadHealthRatingsBackground(dba, building, street, zipcode){
+  building = building.replace(/-/g, '');
+  // street = street.replace(/BLVD/g, 'BOULEVARD');
+  street = street.replace(/AVE/g, 'AVENUE');
   browser.runtime.sendMessage({
     "dba": dba,
     "building": building,
@@ -55,10 +58,13 @@ function loadHealthRatingsBackground(dba, building, street, zipcode){
     "zipcode": zipcode
   }).then(data => {
     if (data.length === 0) {
-      data.push({grade: 'N/A'});
+      displayConnectionError('Unable to find health inspection data');
+      return      
     }
     let latestInspection = data[0];
-
+    if (!latestInspection.grade) {
+      latestInspection.grade = 'N/A';
+    }
     let ratingColor = '';
     switch (latestInspection.grade) {
       case 'A':
@@ -85,17 +91,35 @@ function loadHealthRatingsBackground(dba, building, street, zipcode){
       healthRatingElement.innerText = `Health Rating: ${latestInspection.grade}`;
     } else {
       let restaurantNameElement = document.body.querySelector('h1.ghs-restaurant-nameHeader');
-
-      healthRatingElement = document.createElement('h1');
-      healthRatingElement.setAttribute('id', 'health-rating-text');
-      healthRatingElement.setAttribute('style', `color:${ratingColor}`);
-      
-      healthRatingElement.innerText = `Health Rating: ${latestInspection.grade}`;
+      let healthRatingElement = createHealthRatingElement(dba, building, street, zipcode, ratingColor, latestInspection.grade);
 
       insertElementAfter(restaurantNameElement, healthRatingElement);
       insertElementAfter(restaurantNameElement, document.createElement('br'));
     }
   }).catch(onError);
+}
+
+function createHealthRatingElement(dba, building, street, zipcode, ratingColor, grade) {
+  let healthRatingElement = document.createElement('h1');
+  healthRatingElement.setAttribute('id', 'health-rating-text');
+  healthRatingElement.setAttribute('style', `color:${ratingColor}`);
+  healthRatingElement.setAttribute('class', 'tooltip');
+  healthRatingElement.innerText = `Health Rating: ${grade}`;
+
+  let tooltipNode = document.createElement('div');
+  tooltipNode.setAttribute('class', 'right');
+  tooltipNode.innerHTML = 
+  `
+    <p>
+      ${grade === 'N/A' ? 'No health rating may indicate "Grade Pending"<br>': ''}
+      If rating does not load or you have any doubts please confirm on the 
+      <a href="https://a816-health.nyc.gov/ABCEatsRestaurants/#/Search" target="_blank">NYC Health website</a>
+    </p>
+    <i></i>
+  `;
+
+  healthRatingElement.appendChild(tooltipNode);
+  return healthRatingElement;
 }
 
 /**
