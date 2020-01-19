@@ -65,21 +65,7 @@ function loadHealthRatingsBackground(dba, building, street, zipcode){
     if (!latestInspection.grade) {
       latestInspection.grade = 'N/A';
     }
-    let ratingColor = '';
-    switch (latestInspection.grade) {
-      case 'A':
-        ratingColor = '#2A3E83';
-        break;
-      case 'B':
-        ratingColor = '#58944C';
-        break;
-      case 'C':
-        ratingColor = '#C4673C';
-        break;
-      default:
-        latestInspection.grade = 'N/A'
-        ratingColor = 'gray';
-    }
+    
     let healthRatingNotFoundElement = document.getElementById('health-rating-not-found');
     if (healthRatingNotFoundElement) {
       healthRatingNotFoundElement.parentElement.removeChild(healthRatingNotFoundElement);
@@ -87,11 +73,13 @@ function loadHealthRatingsBackground(dba, building, street, zipcode){
 
     let healthRatingElement = document.getElementById('health-rating-text');
     if (healthRatingElement) {
-      healthRatingElement.style.color = ratingColor;
+      let gradeClass = latestInspection.grade.toLowerCase().replace('/', '');
+      removeClassByReg(healthRatingElement, 'gh-grade-');
+      healthRatingElement.classList.push(`gh-grade-${gradeClass}`);
       healthRatingElement.innerText = `Health Rating: ${latestInspection.grade}`;
     } else {
       let restaurantNameElement = document.body.querySelector('h1.ghs-restaurant-nameHeader');
-      let healthRatingElement = createHealthRatingElement(dba, building, street, zipcode, ratingColor, latestInspection.grade);
+      let healthRatingElement = createHealthRatingElement(latestInspection.grade);
 
       insertElementAfter(restaurantNameElement, healthRatingElement);
       insertElementAfter(restaurantNameElement, document.createElement('br'));
@@ -99,15 +87,19 @@ function loadHealthRatingsBackground(dba, building, street, zipcode){
   }).catch(onError);
 }
 
-function createHealthRatingElement(dba, building, street, zipcode, ratingColor, grade) {
+/**
+ * Creates the HTMLElement for the restaurants health rating, including the disclaimer tooltip
+ * @param {string} grade - Health grade of restaurant
+ */
+function createHealthRatingElement(grade) {
   let healthRatingElement = document.createElement('h1');
+  let gradeClass = grade.toLowerCase().replace('/', '');
   healthRatingElement.setAttribute('id', 'health-rating-text');
-  healthRatingElement.setAttribute('style', `color:${ratingColor}`);
-  healthRatingElement.setAttribute('class', 'tooltip');
+  healthRatingElement.setAttribute('class', `gh-tooltip gh-grade-${gradeClass}`);
   healthRatingElement.innerText = `Health Rating: ${grade}`;
 
   let tooltipNode = document.createElement('div');
-  tooltipNode.setAttribute('class', 'right');
+  tooltipNode.setAttribute('class', 'gh-right');
   tooltipNode.innerHTML = 
   `
     <p>
@@ -129,4 +121,14 @@ function createHealthRatingElement(dba, building, street, zipcode, ratingColor, 
  */
 function insertElementAfter(originalElement, afterElement) {
   originalElement.parentNode.insertBefore(afterElement, originalElement.nextSibling);
+}
+
+/**
+ * Removes a class from an element based on only partial classname
+ * @param {HTMLElement} element - target element for class removal
+ * @param {string} classname - partial or whole name of class to remove by regex
+ */
+function removeClassByReg(element, classname) {
+  element.classname.replace(`/\b${classname}*?\b/g`, '');
+  element.classname.replace(/ +/g, ' ');
 }

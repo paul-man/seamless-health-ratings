@@ -1,11 +1,27 @@
-.tooltip {
+.gh-tooltip {
   display:inline-block;
   position:relative;
   border-bottom:1px dotted #666;
   text-align:left;
 }
 
-.tooltip .right {
+.gh-grade-a {
+  color: #0058A9;
+}
+.gh-grade-b {
+  color: #26A146;
+}
+.gh-grade-c {
+  color: #F68B1F;
+}DF1F26
+.gh-grade-na {
+  color: gray;
+}
+.gh-grade-closed {
+  color: #DF1F26;
+}
+
+.gh-tooltip .gh-right {
   min-width:300px;
   top:50%;
   left:100%;
@@ -29,11 +45,11 @@
             transition: all ease-out .8s;
 }
 
-.tooltip:hover .right {
+.gh-tooltip:hover .gh-right {
   visibility:visible; opacity:1;
 }
 
-.tooltip .right i {
+.gh-tooltip .gh-right i {
   position:absolute;
   top:50%;
   right:100%;
@@ -43,7 +59,7 @@
   overflow:hidden;
 }
 
-.tooltip .right i::after {
+.gh-tooltip .gh-right i::after {
   content:'';
   position:absolute;
   width:12px;
@@ -55,10 +71,11 @@
   box-shadow:0 1px 8px rgba(0,0,0,0.5);
 }
 
-.tooltip .right a {
+.gh-tooltip .gh-right a {
   color: blue;
   text-decoration: underline;
 }
-.tooltip .right a:active {
+
+.gh-tooltip .gh-right a:active {
   color: purple;
 }
