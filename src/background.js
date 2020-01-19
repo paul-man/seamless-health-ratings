@@ -1,4 +1,11 @@
 /**
+ * TODO: check out https://github.com/mdn/webextensions-examples/tree/master/beastify
+ * - it seems like it might be advantageous to use the popup js as a background script
+ * - would make it easier to pass data between popup+html
+ *  - it might actually be impossible to pass from background -> content -> popup
+ */
+
+/**
  * listening for a message from the content_script containing the dba(restaurant name)
  */
 chrome.runtime.onMessage.addListener((request, sender) => {
@@ -17,7 +24,7 @@ chrome.runtime.onMessage.addListener((request, sender) => {
  * @param {number} zipcode - Zipcode(postal code) for business
  */
 function getHealthGrade(dba, building, street, zipcode) {
-  var url = new URL('https://data.cityofnewyork.us/resource/43nn-pn8j.json')
+  var url = new URL('https://data.cityofnewyork.us/resource/43nn-pn8j.json');
   var params = {
     "$limit" : 5000,
     "$$app_token" : "nycDataAppToken",
@@ -30,7 +37,7 @@ function getHealthGrade(dba, building, street, zipcode) {
   return fetch(url)
   .then((response) => response.json())
   .then((data) => {
-    if (!data) return [];
+    if (data.length === 0 || typeof data === 'undefined') return [];
     data.sort((a, b) => {
       return a.inspection_date < b.inspection_date;
     });
@@ -47,6 +54,7 @@ function getHealthGrade(dba, building, street, zipcode) {
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
   if (tab.url.match(seamlessReg) || tab.url.match(grubhubReg)) {
     if (changeInfo.status == 'complete') {
+      console.log(tab.url);
       chrome.tabs.executeScript(tabId, {file:"/src/grubless-health.js"}).then(()=>{
       console.log("Executed!");
       }).catch(err=>{

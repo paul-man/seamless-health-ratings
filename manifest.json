@@ -11,6 +11,7 @@
   },
   "permissions": [
     "*://data.cityofnewyork.us/resource/*",
+    "activeTab",
     "tabs",
     "webNavigation",
     "<all_urls>"
@@ -18,12 +19,21 @@
   "content_scripts": [
     {
       "matches": ["*://*.seamless.com/menu*", "*://grubhub.com/restaurant/*"],
-      "css": ["src/grubless-health.css"]
+      "css": ["/src/grubless-health.css"]
     }
   ],
   "background": {
     "scripts": ["/src/background.js"],
     "persistent": true
+  },
+  "browser_action": {
+    "browser_style": true,
+    "default_popup": "/src/popup/health-rating-info.html",
+    "default_title": "Grubless NYC Health Ratings",
+    "default_icon": {
+      "16": "icons/icon.svg",
+      "32": "icons/icon.svg"
+    }
   },
   "applications": {
     "gecko": {

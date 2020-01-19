@@ -2,6 +2,7 @@
  * Seamless loads the restaurant data in a clean JSON object but we must wait for the object to be loaded to take advantage
  */
 (() => {
+  console.log('executed content_script');
   let attemptCount = 0;
   let waitForRestaurantData = setInterval(function() {
     if (document.body.getElementsByTagName('ghs-schema-place-action').length) {
@@ -59,7 +60,8 @@ function loadHealthRatingsBackground(dba, building, street, zipcode){
   }).then(data => {
     if (data.length === 0) {
       displayConnectionError('Unable to find health inspection data');
-      return      
+      sendDataToPopup(data);
+      return false;
     }
     let latestInspection = data[0];
     if (!latestInspection.grade) {
@@ -84,7 +86,16 @@ function loadHealthRatingsBackground(dba, building, street, zipcode){
       insertElementAfter(restaurantNameElement, healthRatingElement);
       insertElementAfter(restaurantNameElement, document.createElement('br'));
     }
+    sendDataToPopup(data);
+    console.log('Completed content_script');
   }).catch(onError);
+}
+
+function sendDataToPopup(data) {
+  chrome.runtime.sendMessage({
+    msg: "new_restaurant_fetched", 
+    data: data
+  });
 }
 
 /**
