@@ -1,7 +1,7 @@
 /**
  * listening for a message from the content_script containing the dba(restaurant name)
  */
-browser.runtime.onMessage.addListener((request, sender) => {
+chrome.runtime.onMessage.addListener((request, sender) => {
   if (request.dba.length > 0) {
     return Promise.resolve(getHealthGrade(request.dba, request.building, request.street, request.zipcode));
   } else {
@@ -50,7 +50,7 @@ function getHealthGrade(dba, building, street, zipcode) {
 chrome.tabs.onUpdated.addListener( function (tabId, changeInfo, tab) {
   if (tab.url.match(seamlessReg) || tab.url.match(grubhubReg)) {
     if (changeInfo.status == 'complete') {
-      browser.tabs.executeScript(tabId, {file:"/src/grubless-health.js"}).then(()=>{
+      chrome.tabs.executeScript(tabId, {file:"/src/grubless-health.js", runAt:"document_end"}).then(()=>{
       console.log("Executed!");
       }).catch(err=>{
         console.error(err);
