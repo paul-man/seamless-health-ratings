@@ -1,3 +1,22 @@
+.gh-grade-a {
+  color: #0058A9;
+}
+.gh-grade-b {
+  color: #26A146;
+}
+.gh-grade-c {
+  color: #F68B1F;
+}
+.gh-grade-na {
+  color: gray;
+}
+.gh-grade-pending {
+  color: gray;
+}
+.gh-grade-closed {
+  color: #DF1F26;
+}
+
 .gh-tooltip {
   display:inline-block;
   position:relative;

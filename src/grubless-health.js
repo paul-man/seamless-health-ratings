@@ -7,13 +7,16 @@
     if (document.body.getElementsByTagName('ghs-schema-place-action').length) {
        clearInterval(waitForRestaurantData);
        setRestaurantData();
+       return true;
     } else {
       if (attemptCount++ >= 10) {
         clearInterval(waitForRestaurantData);
         displayConnectionError();
+        return true;
       }
     }
-  }, 100); 
+  }, 100);
+  return true;
 })();
 
 /**
@@ -49,7 +52,7 @@ function setRestaurantData() {
  */
 function loadHealthRatingsBackground(dba, building, street, zipcode){
   building = building.replace(/-/g, '');
-  // street = street.replace(/BLVD/g, 'BOULEVARD');
+  street = street.replace(/BLVD/g, 'BOULEVARD');
   street = street.replace(/AVE/g, 'AVENUE');
   browser.runtime.sendMessage({
     "dba": dba,
@@ -59,26 +62,14 @@ function loadHealthRatingsBackground(dba, building, street, zipcode){
   }).then(data => {
     if (data.length === 0) {
       displayConnectionError('Unable to find health inspection data');
-      return      
+      return true;
     }
     let latestInspection = data[0];
     if (!latestInspection.grade) {
       latestInspection.grade = 'N/A';
     }
-    let ratingColor = '';
-    switch (latestInspection.grade) {
-      case 'A':
-        ratingColor = '#2A3E83';
-        break;
-      case 'B':
-        ratingColor = '#58944C';
-        break;
-      case 'C':
-        ratingColor = '#C4673C';
-        break;
-      default:
-        latestInspection.grade = 'N/A'
-        ratingColor = 'gray';
+    if(latestInspection.grade === 'Z') {
+      latestInspection.grade = 'Pending';
     }
     let healthRatingNotFoundElement = document.getElementById('health-rating-not-found');
     if (healthRatingNotFoundElement) {
@@ -91,34 +82,47 @@ function loadHealthRatingsBackground(dba, building, street, zipcode){
       healthRatingElement.innerText = `Health Rating: ${latestInspection.grade}`;
     } else {
       let restaurantNameElement = document.body.querySelector('h1.ghs-restaurant-nameHeader');
-      let healthRatingElement = createHealthRatingElement(dba, building, street, zipcode, ratingColor, latestInspection.grade);
+      let healthRatingElement = createHealthRatingElement(latestInspection.grade);
 
       insertElementAfter(restaurantNameElement, healthRatingElement);
       insertElementAfter(restaurantNameElement, document.createElement('br'));
     }
-  }).catch(onError);
+    return true;
+  }).catch(onError => {
+    console.log(onError);
+  });
+  return true;
 }
 
-function createHealthRatingElement(dba, building, street, zipcode, ratingColor, grade) {
-  let healthRatingElement = document.createElement('h1');
-  healthRatingElement.setAttribute('id', 'health-rating-text');
-  healthRatingElement.setAttribute('style', `color:${ratingColor}`);
-  healthRatingElement.setAttribute('class', 'gh-tooltip');
-  healthRatingElement.innerText = `Health Rating: ${grade}`;
-
-  let tooltipNode = document.createElement('div');
-  tooltipNode.setAttribute('class', 'gh-right');
-  tooltipNode.innerHTML = 
+function createTooltip(grade) {
+  var parser = new DOMParser();
+  var domString = 
   `
+  <div class="gh-right">
     <p>
       ${grade === 'N/A' ? 'No health rating may indicate "Grade Pending"<br>': ''}
       If rating does not load or you have any doubts please confirm on the 
       <a href="https://a816-health.nyc.gov/ABCEatsRestaurants/#/Search" target="_blank">NYC Health website</a>
     </p>
     <i></i>
+  </div>
   `;
+  var html = parser.parseFromString(domString, 'text/html');    
+  return html.body.firstChild;
+}
 
-  healthRatingElement.appendChild(tooltipNode);
+/**
+ * Creates the HTMLElement for the restaurants health rating, including the disclaimer tooltip
+ * @param {string} grade - Health grade of restaurant
+ */
+function createHealthRatingElement(grade) {
+  let healthRatingElement = document.createElement('h1');
+  let gradeClass = grade.toLowerCase().replace('/', '');
+  healthRatingElement.setAttribute('id', 'health-rating-text');
+  healthRatingElement.setAttribute('class', `gh-tooltip gh-grade-${gradeClass}`);
+  healthRatingElement.innerText = `Health Rating: ${grade}`;
+
+  healthRatingElement.appendChild(createTooltip(grade));
   return healthRatingElement;
 }
 
@@ -129,4 +133,14 @@ function createHealthRatingElement(dba, building, street, zipcode, ratingColor, 
  */
 function insertElementAfter(originalElement, afterElement) {
   originalElement.parentNode.insertBefore(afterElement, originalElement.nextSibling);
+}
+
+/**
+ * Removes a class from an element based on only partial classname
+ * @param {HTMLElement} element - target element for class removal
+ * @param {string} classname - partial or whole name of class to remove by regex
+ */
+function removeClassByReg(element, classname) {
+  element.classname.replace(`/\b${classname}*?\b/g`, '');
+  element.classname.replace(/ +/g, ' ');
 }
