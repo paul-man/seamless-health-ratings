@@ -25,14 +25,6 @@
     "scripts": ["/src/background.js"],
     "persistent": true
   },
-  "browser_action": {
-    "browser_style": true,
-    "default_popup": "popup/health-rating-info.html",
-    "default_icon": {
-      "16": "icons/icon.svg",
-      "32": "icons/icon.svg"
-    }
-  },
   "applications": {
     "gecko": {
       "id": "seamless.nyc.health.ratings@gmail.com"
