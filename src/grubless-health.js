@@ -103,11 +103,11 @@ function createHealthRatingElement(dba, building, street, zipcode, ratingColor, 
   let healthRatingElement = document.createElement('h1');
   healthRatingElement.setAttribute('id', 'health-rating-text');
   healthRatingElement.setAttribute('style', `color:${ratingColor}`);
-  healthRatingElement.setAttribute('class', 'tooltip');
+  healthRatingElement.setAttribute('class', 'gh-tooltip');
   healthRatingElement.innerText = `Health Rating: ${grade}`;
 
   let tooltipNode = document.createElement('div');
-  tooltipNode.setAttribute('class', 'right');
+  tooltipNode.setAttribute('class', 'gh-right');
   tooltipNode.innerHTML = 
   `
     <p>
