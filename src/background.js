@@ -30,6 +30,10 @@ function getHealthGrade(dba, building, street, zipcode) {
   return fetch(url)
   .then((response) => response.json())
   .then((data) => {
+    if (data.length === 0 || 
+        typeof data === 'undefined' ||
+        data.error === true) return [];
+
     data.sort((a, b) => {
       return a.inspection_date < b.inspection_date;
     });
